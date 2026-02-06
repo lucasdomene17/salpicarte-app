@@ -36,14 +36,14 @@ jobs:
           npm run build --if-present -- --configuration production
 
       - name: Deploy to Firebase (production)
-        if: inputs.channel == 
+        if: inputs.channel == ''
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           firebase deploy --only hosting --project "${{ inputs.project }}" --non-interactive
 
       - name: Deploy to Firebase Preview Channel
-        if: inputs.channel != 
+        if: inputs.channel != ''
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
