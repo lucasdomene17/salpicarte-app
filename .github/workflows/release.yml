@@ -19,28 +19,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: npm
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build --if-present -- --configuration production
 
-      - name: Build Angular
-        run: npm run build --if-present
+      - name: Deploy to Firebase Production
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SALPICARTE_AR }}"
+          channelId: live
+          projectId: salpicarte-ar
 
       - name: Prepare artifact
         run: |
           mkdir -p artifacts
-          if [ -d dist ]; then
-            zip -r artifacts/dist.zip dist
-          else
-            echo "No se encontró directorio dist tras el build" && exit 1
-          fi
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-zip
-          path: artifacts/dist.zip
+          # Ajustado a tu carpeta de salida real según tu primer mensaje
+          zip -r artifacts/dist.zip dist/salpicarte-app
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
